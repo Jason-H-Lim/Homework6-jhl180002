@@ -2,21 +2,27 @@
  * Usage of CDK Matrix
  *
  * File:   example1.cc
- * Author: Stephen Perkins
- * Email:  stephen.perkins@utdallas.edu
+ * Author: Jason Lim
+ * Email:  jlh180002@utdallas.edu
+ * Class:  CS 3377.501, Spring 2020
+ * Version: 1.0
+ * Copyright: 2020, All Rights Reserved
+ *
+ * Description: This program creates a 5x3 matrix containing records from a binary file
  */
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "cdk.h"
-
+#include "binaryHeader.h"
 
 #define MATRIX_WIDTH 3
-#define MATRIX_HEIGHT 3
-#define BOX_WIDTH 15
-#define MATRIX_NAME_STRING "Test Matrix"
+#define MATRIX_HEIGHT 5
+#define BOX_WIDTH 20
+#define MATRIX_NAME_STRING "Binary File Contents"
 
 using namespace std;
-
 
 int main()
 {
@@ -24,11 +30,21 @@ int main()
   WINDOW	*window;
   CDKSCREEN	*cdkscreen;
   CDKMATRIX     *myMatrix;           // CDK Screen Matrix
+  stringstream ss;
+  int temp = 0;
 
-  const char 		*rowTitles[MATRIX_HEIGHT+1] = {"R0", "R1", "R2", "R3"};
-  const char 		*columnTitles[MATRIX_WIDTH+1] = {"C0", "C1", "C2", "C3"};
-  int		boxWidths[MATRIX_WIDTH+1] = {BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH};
-  int		boxTypes[MATRIX_WIDTH+1] = {vMIXED, vMIXED, vMIXED, vMIXED};
+  const char 		*rowTitles[MATRIX_HEIGHT + 1] = {"A0", "a", "b", "c", "d", "e"};
+  const char 		*columnTitles[MATRIX_WIDTH + 1] = { "CO", "a", "b", "c"};
+  int		boxWidths[MATRIX_WIDTH + 1] = {BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, BOX_WIDTH};
+  int		boxTypes[MATRIX_WIDTH + 1] = {vMIXED, vMIXED, vMIXED, vMIXED};
+
+  BinaryFileHeader *record = new BinaryFileHeader();
+
+  ifstream binaryFile ("/scratch/perkins/cs3377.bin", ios::in | ios::binary);
+
+  binaryFile.read((char *) record, sizeof(BinaryFileHeader));
+
+  string magicNum, version, records; 
 
   /*
    * Initialize the Cdk screen.
@@ -44,11 +60,11 @@ int main()
   /*
    * Create the matrix.  Need to manually cast (const char**) to (char **)
   */
-  myMatrix = newCDKMatrix(cdkscreen, CENTER, CENTER, MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_WIDTH, MATRIX_HEIGHT,
-			  MATRIX_NAME_STRING, (char **) columnTitles, (char **) rowTitles, boxWidths,
-				     boxTypes, 1, 1, ' ', ROW, true, true, false);
+  myMatrix = newCDKMatrix(cdkscreen, CENTER, CENTER, MATRIX_HEIGHT, MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_WIDTH,
+			  MATRIX_NAME_STRING, (char **) rowTitles, (char **) columnTitles, boxWidths,
+			  boxTypes, 1, 1, ' ', ROW, true, true, false);
 
-  if (myMatrix ==NULL)
+  if (myMatrix == NULL)
     {
       printf("Error creating Matrix\n");
       _exit(1);
@@ -58,13 +74,29 @@ int main()
   drawCDKMatrix(myMatrix, true);
 
   /*
-   * Dipslay a message
+   * Display a message
    */
-  setCDKMatrixCell(myMatrix, 2, 2, "Test Message");
-  drawCDKMatrix(myMatrix, true);    /* required  */
+  
+  temp = record->magicNumber;
+  
 
+  ss << "0x" << std::uppercase << std::hex << temp;
+
+  string result = ss.str();
+
+  magicNum = "Magic: " + result;
+  version = "Version: " + boost::lexical_cast<string>(record->versionNumber);
+  records = "NumRecords: " + boost::lexical_cast<string>(record->numRecords);
+  
+  setCDKMatrixCell(myMatrix, 1, 1, magicNum.c_str());
+  setCDKMatrixCell(myMatrix, 1, 2, version.c_str());
+  setCDKMatrixCell(myMatrix, 1, 3, records.c_str());
+
+  drawCDKMatrix(myMatrix, true);    /* required  */
+  
+  binaryFile.close();
   /* so we can see results */
-  sleep (10);
+  sleep (5);
 
 
   // Cleanup screen
