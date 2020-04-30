@@ -24,6 +24,8 @@
 
 using namespace std;
 
+extern string toHex(int magicNum);
+
 int main()
 {
 
@@ -72,8 +74,7 @@ int main()
     }
 
   int temp = record->magicNumber; // Local variable to hold the magic number record from the binary file
-  ss << "0x" << std::uppercase << std::hex << temp; // Using string stream to convert the integer to a hexadecimal integer
-  string result = ss.str(); // Converting to a string to display in the matrix
+  string result = toHex(temp);
 
   // Creating variables to hold the header record from the binary file
   magicNum = "Magic: " + result;

@@ -17,7 +17,7 @@ LDLIBS = -l cdk -lcurses
 
 EXECFILE = hw6
 
-SRCS = driver6.cc
+SRCS = driver6.cc hexUtility.cc
 
 OBJS = $(SRCS:cc=o)
 
