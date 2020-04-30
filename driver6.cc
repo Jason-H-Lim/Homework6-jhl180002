@@ -16,6 +16,8 @@
 #include <sstream>
 #include "cdk.h"
 #include "binaryHeader.h"
+#include "binaryRecord.h"
+#include <boost/lexical_cast.hpp>
 
 #define MATRIX_WIDTH 3
 #define MATRIX_HEIGHT 5
@@ -23,6 +25,40 @@
 #define MATRIX_NAME_STRING "Binary File Contents"
 
 using namespace std;
+
+//int countStrings()
+//{
+
+//int numStrings = 0;
+
+//FILE *f = popen("strings /scratch/perkins/cs3377.bin | wc -l > temp.txt", "w");
+
+
+//string homePath = getenv("HOME");
+
+//homePath += "/Homework6-jhl180002";
+
+//chdir(homePath.c_str());
+
+//ifstream input;
+
+//input.open("temp.txt", ios::in);
+
+//input >> numStrings;
+
+//if(numStrings > 4){
+
+//numStrings = 4;
+
+//}
+
+//f = popen("rm -f temp.txt", "w");
+
+//pclose(f);
+//input.close();
+
+//return numStrings;
+//}
 
 int main()
 {
@@ -39,12 +75,16 @@ int main()
   int		boxTypes[MATRIX_WIDTH + 1] = {vMIXED, vMIXED, vMIXED, vMIXED};
 
   BinaryFileHeader *record = new BinaryFileHeader();
+  
+  BinaryFileRecord *record2 = new BinaryFileRecord();
 
   ifstream binaryFile ("/scratch/perkins/cs3377.bin", ios::in | ios::binary);
-
+  
   binaryFile.read((char *) record, sizeof(BinaryFileHeader));
 
   string magicNum, version, records; 
+
+  int numStr = record->numRecords;
 
   /*
    * Initialize the Cdk screen.
@@ -78,26 +118,46 @@ int main()
    */
   
   temp = record->magicNumber;
-  
-
   ss << "0x" << std::uppercase << std::hex << temp;
-
   string result = ss.str();
 
   magicNum = "Magic: " + result;
   version = "Version: " + boost::lexical_cast<string>(record->versionNumber);
   records = "NumRecords: " + boost::lexical_cast<string>(record->numRecords);
   
+  int lenCellrow = 2, lenCellcol = 1, strCell = 2, counter = 0;
+ // numStr = countStrings();
+
+  while(counter < numStr)
+  {
+   binaryFile.read((char *) record2, sizeof(BinaryFileRecord));
+   int strLength = record2->strLength;
+   string str = "", stringlen = "";
+   for(int i = 0; i < strLength; i++)
+   {
+    
+    str += record2->stringBuffer[i];
+
+   }
+   
+   stringlen = "strlen: " + boost::lexical_cast<string>(strLength);
+   setCDKMatrixCell(myMatrix, lenCellrow, lenCellcol, stringlen.c_str());
+   setCDKMatrixCell(myMatrix, lenCellrow++, strCell, str.c_str());
+   
+   counter++;
+  }
+  
   setCDKMatrixCell(myMatrix, 1, 1, magicNum.c_str());
   setCDKMatrixCell(myMatrix, 1, 2, version.c_str());
   setCDKMatrixCell(myMatrix, 1, 3, records.c_str());
-
+  
   drawCDKMatrix(myMatrix, true);    /* required  */
   
   binaryFile.close();
+  delete record;
+  delete record2;
   /* so we can see results */
   sleep (5);
-
 
   // Cleanup screen
   endCDK();

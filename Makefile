@@ -11,13 +11,13 @@
  
 
 CXX = g++
-CXXFLAGS = -Wall -I /scratch/perkins/include
+CXXFLAGS = -Wall -Wno-write-strings -I /scratch/perkins/include
 LDFLAGS = -L /scratch/perkins/lib
 LDLIBS = -l cdk -lcurses
 
 EXECFILE = hw6
 
-SRCS = example1.cc
+SRCS = driver6.cc
 
 OBJS = $(SRCS:cc=o)
 
