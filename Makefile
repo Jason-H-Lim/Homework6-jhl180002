@@ -7,7 +7,7 @@
 # Version:		1.0
 # Copyright:		2020, All Rights Reserved
 #
-# Description: This is a Makefile that will link the Curse library with the .cc files all to create the executable.
+# Description: This is a Makefile that will link the Curse library with the .cc file to create the executable.
  
 
 CXX = g++

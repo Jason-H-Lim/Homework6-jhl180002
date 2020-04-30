@@ -5,7 +5,7 @@
 // Version: 1.0
 // Copyright: 2020, All Rights Reserved.
 //
-// Description: This file contains the class used to read the records from the binary file that don't include the header.
+// Description: This file contains a class along with class variables that are used to read the non-header records from the binary file.
 
 
 #ifndef BINARYFILERECORD_H
