@@ -6,8 +6,7 @@
 // Version: 1.0
 // Copyright: All Rights Reserved
 //
-// Description: This header file holds two classes that are used to receive the header and// and record from the binary file.
-//
+// Description: This header file holds a class and class variables that are used to read the header record from the given binary file.
 
 #ifndef BINARYHEADER_H
 #define BINARYHEADER_H
